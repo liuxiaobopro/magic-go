@@ -16,15 +16,19 @@ var (
 
 type Conf struct {
 	CommandNew struct {
-		Output      string `mapstructure:"output"`       // 输出目录
-		ProjectName string `mapstructure:"project_name"` // 项目名称
-		InitModule  string `mapstructure:"init_module"`  // 初始化模块
-		DbDns       string `mapstructure:"db_dns"`       // 数据库连接
-	} `mapstructure:"command_new"`
+		Output      string `mapstructure:"Output" json:"Output"`           // 输出目录
+		ProjectName string `mapstructure:"ProjectName" json:"ProjectName"` // 项目名称
+		InitModule  string `mapstructure:"InitModule" json:"InitModule"`   // 初始化模块
+		DbDns       string `mapstructure:"DbDns" json:"DbDns"`             // 数据库连接
+	} `mapstructure:"CommandNew" json:"CommandNew"`
 }
 
 func Get() *Conf {
 	once.Do(func() {
+		if File == "" {
+			File = "config.yaml"
+		}
+
 		v := viper.New()
 		v.SetConfigFile(File)
 		v.SetConfigType("yml")

@@ -1,10 +1,10 @@
 # new 命令
-command_new:
+CommandNew:
     # 输出目录
-    output: "./output"
+    Output: "./output"
     # 项目名称
-    project_name: "myapp"
+    ProjectName: "myapp"
     # 初始化模块
-    init_module: "admin"
+    InitModule: "admin"
     # 数据库连接(基于 xorm)
-    db_dns: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/test111?charset=utf8mb4"
+    DbDns: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/test111?charset=utf8mb4"

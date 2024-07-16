@@ -10,7 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// 配置 -c 参数说明
 var rootCmd = &cobra.Command{
 	Use:     "Golang Web CLI",
 	Long:    "golang的web脚手架工具",
