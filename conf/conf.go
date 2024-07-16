@@ -16,6 +16,7 @@ var (
 
 type Conf struct {
 	CommandNew struct {
+		Output      string `mapstructure:"output"`       // 输出目录
 		ProjectName string `mapstructure:"project_name"` // 项目名称
 		InitModule  string `mapstructure:"init_module"`  // 初始化模块
 		DbDns       string `mapstructure:"db_dns"`       // 数据库连接

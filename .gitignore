@@ -31,3 +31,5 @@ go.work
 
 .vscode/launch.json
 .vscode/settings.json
+
+output/

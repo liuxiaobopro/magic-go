@@ -1,5 +1,7 @@
 # new 命令
 command_new:
+    # 输出目录
+    output: "./output"
     # 项目名称
     project_name: "myapp"
     # 初始化模块
