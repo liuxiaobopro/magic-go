@@ -1,11 +1,8 @@
 package main
 
 import (
-	"embed"
-
 	"{{.ProjectName}}/initialize"
 )
-
 
 func main() {
 	initialize.Config()

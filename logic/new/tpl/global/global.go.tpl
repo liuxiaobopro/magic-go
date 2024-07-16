@@ -1,12 +1,9 @@
 package global
 
 import (
-	"os"
-
 	"{{.ProjectName}}/define/types/config"
 
 	logx "github.com/liuxiaobopro/gobox/log"
-	otherx "github.com/liuxiaobopro/gobox/other"
 	"xorm.io/xorm"
 )
 
