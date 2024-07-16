@@ -18,7 +18,6 @@ type Conf struct {
 	CommandNew struct {
 		Output      string `mapstructure:"Output" json:"Output"`           // 输出目录
 		ProjectName string `mapstructure:"ProjectName" json:"ProjectName"` // 项目名称
-		InitModule  string `mapstructure:"InitModule" json:"InitModule"`   // 初始化模块
 		DbDns       string `mapstructure:"DbDns" json:"DbDns"`             // 数据库连接
 	} `mapstructure:"CommandNew" json:"CommandNew"`
 }

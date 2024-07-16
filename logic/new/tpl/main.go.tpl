@@ -1,7 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"embed"
+
+	"{{.ProjectName}}/initialize"
+)
+
 
 func main() {
-	fmt.Println("Hello, World!")
+	initialize.Config()
+	initialize.Log()
+	initialize.Db()
+	initialize.Http()
 }
