@@ -2,9 +2,13 @@
 CommandNew:
     # 输出目录
     Output: "./output"
+    # go版本
+    GoVersion: "1.21"
     # 项目名称
     ProjectName: "myapp"
+    # 模块名称
+    ModuleName: "admin"
     # 初始化模块
     InitModule: "admin"
     # 数据库连接(基于 xorm)
-    DbDns: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/test111?charset=utf8mb4"
+    DbDns: "root:111111@tcp(127.0.0.1:3306)/enian_blog?charset=utf8mb4"

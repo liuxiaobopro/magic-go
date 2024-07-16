@@ -15,12 +15,15 @@ var (
 )
 
 type Conf struct {
-	CommandNew struct {
-		Output      string `mapstructure:"Output" json:"Output"`           // 输出目录
-		GoVersion   string `mapstructure:"GoVersion" json:"GoVersion"`     // Go版本
-		ProjectName string `mapstructure:"ProjectName" json:"ProjectName"` // 项目名称
-		DbDns       string `mapstructure:"DbDns" json:"DbDns"`             // 数据库连接
-	} `mapstructure:"CommandNew" json:"CommandNew"`
+	CommandNew CommandNew `mapstructure:"CommandNew" json:"CommandNew"`
+}
+
+type CommandNew struct {
+	Output      string `mapstructure:"Output" json:"Output"`           // 输出目录
+	GoVersion   string `mapstructure:"GoVersion" json:"GoVersion"`     // Go版本
+	ProjectName string `mapstructure:"ProjectName" json:"ProjectName"` // 项目名称
+	ModuleName  string `mapstructure:"ModuleName" json:"ModuleName"`   // 模块名称
+	DbDns       string `mapstructure:"DbDns" json:"DbDns"`             // 数据库连接
 }
 
 func Get() *Conf {

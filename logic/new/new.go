@@ -11,12 +11,17 @@ import (
 	"magic_go/conf"
 	"magic_go/utils"
 
+	_ "github.com/go-sql-driver/mysql"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
+	"xorm.io/xorm"
 )
 
 //go:embed tpl/*
 var tplFs embed.FS
+
+//go:embed tpl1/*
+var tpl1Fs embed.FS
 
 type tpl struct {
 	FS      embed.FS
@@ -24,7 +29,112 @@ type tpl struct {
 	Output  string
 }
 
+var tables []string
+
 func Start() {
+	build()
+
+	engine, _ := xorm.NewEngine("mysql", conf.Get().CommandNew.DbDns)
+
+	ts, _ := engine.DBMetas()
+	for _, table := range ts {
+		tables = append(tables, table.Name)
+	}
+
+	logic()
+	controller()
+}
+
+func logic() {
+	// 生成req
+	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/req/req.go", conf.Get().CommandNew.Output)); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return
+	} else {
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/req.tpl")
+		tpl, _ := template.New("req.tpl").Funcs(template.FuncMap{
+			"CamelCase": CamelCase,
+		}).Parse(string(tplByte))
+
+		type data struct {
+			ModuleName string   `json:"ModuleName"`
+			Tables     []string `json:"Tables"`
+		}
+
+		if err := tpl.Execute(f, data{
+			ModuleName: conf.Get().CommandNew.ModuleName,
+			Tables:     tables,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
+
+	// 生成reply
+	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/reply/reply.go", conf.Get().CommandNew.Output)); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return
+	} else {
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/reply.tpl")
+		tpl, _ := template.New("reply.tpl").Funcs(template.FuncMap{
+			"CamelCase": CamelCase,
+		}).Parse(string(tplByte))
+
+		type data struct {
+			ModuleName string   `json:"ModuleName"`
+			Tables     []string `json:"Tables"`
+		}
+
+		if err := tpl.Execute(f, data{
+			ModuleName: conf.Get().CommandNew.ModuleName,
+			Tables:     tables,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
+
+	for _, v := range tables {
+		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/logic/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/logic.tpl")
+
+		// 解析模板
+		tpl, err := template.New("logic.tpl").
+			Funcs(template.FuncMap{
+				"CamelCase":      CamelCase,
+				"CamelCaseLower": CamelCaseLower,
+			}).
+			Parse(string(tplByte))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+
+		type data struct {
+			conf.CommandNew
+			Table string `json:"Table"`
+		}
+
+		// 基于模板生成内容并写入文件
+		if err = tpl.Execute(f, data{
+			CommandNew: conf.Get().CommandNew,
+			Table:      v,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
+}
+
+func controller() {
+}
+
+func build() {
 	tpl := &tpl{
 		FS:      tplFs,
 		TplData: conf.Get().CommandNew,
@@ -47,6 +157,13 @@ func (t *tpl) Build() {
 			filePath := strings.TrimLeft(path, "tpl/")
 			filePath = filePath[:len(filePath)-4]
 
+			f, err := utils.CreateFileOrDir(conf.Get().CommandNew.Output + "/" + filePath)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "%v\n", err)
+				return err
+			}
+			defer f.Close()
+
 			// 解析模板
 			tpl, err := template.New(path).
 				Funcs(template.FuncMap{
@@ -59,16 +176,8 @@ func (t *tpl) Build() {
 				return err
 			}
 
-			f, err := utils.CreateFileOrDir(conf.Get().CommandNew.Output + "/" + filePath)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "%v\n", err)
-				return err
-			}
-			defer f.Close()
-
 			// 基于模板生成内容并写入文件
-			err = tpl.Execute(f, conf.Get().CommandNew)
-			if err != nil {
+			if err = tpl.Execute(f, conf.Get().CommandNew); err != nil {
 				fmt.Fprintf(os.Stderr, "%v\n", err)
 				return err
 			}
