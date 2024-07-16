@@ -1,7 +1,12 @@
 package new
 
-import "fmt"
+import (
+	"fmt"
 
-func Start(projectName string) {
-	fmt.Println("创建项目:", projectName)
+	"magic_go/conf"
+)
+
+func Start() {
+	fmt.Println(conf.Get())
+	fmt.Println("创建项目: ", conf.Get().CommandNew.ProjectName)
 }

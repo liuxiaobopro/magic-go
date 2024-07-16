@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"magic_go/command"
+	"magic_go/conf"
 
 	"github.com/spf13/cobra"
 )
@@ -17,7 +18,7 @@ var rootCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.PersistentFlags().StringVarP(&command.ConfigFile, "config", "c", command.ConfigFile, "The configuration file path")
+	rootCmd.PersistentFlags().StringVarP(&conf.File, "config", "c", conf.File, "The configuration file path")
 	rootCmd.AddCommand(command.New())
 }
 

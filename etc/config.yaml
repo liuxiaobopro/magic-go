@@ -1,1 +1,8 @@
-db_dns: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/test111?charset=utf8mb4"
+# new 命令
+command_new:
+    # 项目名称
+    project_name: "myapp"
+    # 初始化模块
+    init_module: "admin"
+    # 数据库连接(基于 xorm)
+    db_dns: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/test111?charset=utf8mb4"
