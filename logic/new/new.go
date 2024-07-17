@@ -145,6 +145,41 @@ func logic() {
 }
 
 func controller() {
+	for _, v := range tables {
+		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/controller/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v), true)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/controller.tpl")
+
+		// 解析模板
+		tpl, err := template.New("controller.tpl").
+			Funcs(template.FuncMap{
+				"CamelCase":      CamelCase,
+				"CamelCaseLower": CamelCaseLower,
+			}).
+			Parse(string(tplByte))
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+
+		type data struct {
+			conf.CommandNew
+			Table string `json:"Table"`
+		}
+
+		// 基于模板生成内容并写入文件
+		if err = tpl.Execute(f, data{
+			CommandNew: conf.Get().CommandNew,
+			Table:      v,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
 }
 
 func build() {

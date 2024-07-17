@@ -15,11 +15,11 @@ import (
     timex "github.com/liuxiaobopro/gobox/time"
 )
 
-type {{CamelCaseLower .Table}}Logic struct {}
+type {{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic struct {}
 
-var {{CamelCase .Table}}Logic = &{{CamelCaseLower .Table}}Logic{}
+var {{CamelCase .ModuleName}}{{CamelCase .Table}}Logic = &{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic{}
 
-func (l *{{CamelCaseLower .Table}}Logic) Create(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}CreateReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}CreateReply, *replyx.T) {
+func (l *{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic) Create(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}CreateReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}CreateReply, *replyx.T) {
     out := &reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}CreateReply{}
 
 	//#region 参数校验
@@ -39,7 +39,7 @@ func (l *{{CamelCaseLower .Table}}Logic) Create(c *gin.Context, in *req.{{CamelC
 	return out, nil
 }
 
-func (l *{{CamelCaseLower .Table}}Logic) Delete(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}DeleteReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}DeleteReply, *replyx.T) {
+func (l *{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic) Delete(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}DeleteReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}DeleteReply, *replyx.T) {
 	out := &reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}DeleteReply{}
 
 	if _, err := global.DbSession().In("id", strings.Split(in.IDs, ",")).Delete(&models.{{CamelCase .Table}}{}); err != nil {
@@ -50,7 +50,7 @@ func (l *{{CamelCaseLower .Table}}Logic) Delete(c *gin.Context, in *req.{{CamelC
 	return out, nil
 }
 
-func (l *{{CamelCaseLower .Table}}Logic) Update(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}UpdateReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}UpdateReply, *replyx.T) {
+func (l *{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic) Update(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}UpdateReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}UpdateReply, *replyx.T) {
 	out := &reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}UpdateReply{}
 
 	var (
@@ -88,7 +88,7 @@ func (l *{{CamelCaseLower .Table}}Logic) Update(c *gin.Context, in *req.{{CamelC
 
 type detail = models.{{CamelCase .Table}}
 
-func (l *{{CamelCaseLower .Table}}Logic) List(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReply, *replyx.T) {
+func (l *{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic) List(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReq) (*reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReply, *replyx.T) {
 	out := &reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReply{}
 
 	var (
@@ -119,7 +119,7 @@ func (l *{{CamelCaseLower .Table}}Logic) List(c *gin.Context, in *req.{{CamelCas
 	return out, nil
 }
 
-func (l *{{CamelCaseLower .Table}}Logic) Detail(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}DetailReq) (reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}DetailReply, *replyx.T) {
+func (l *{{CamelCaseLower .ModuleName}}{{CamelCaseLower .Table}}Logic) Detail(c *gin.Context, in *req.{{CamelCase .ModuleName}}{{CamelCase .Table}}DetailReq) (reply.{{CamelCase .ModuleName}}{{CamelCase .Table}}DetailReply, *replyx.T) {
 	var out any
 	if res, err := l.List(c, &req.{{CamelCase .ModuleName}}{{CamelCase .Table}}ListReq{IDs: strconv.Itoa(int(in.ID))}); err != nil {
 		return out, err

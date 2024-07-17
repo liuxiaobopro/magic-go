@@ -5,3 +5,7 @@ const (
 
 	ReqText = "ReqText"
 )
+
+func DefaultResStyle(data any, args ...interface{}) (any, error) {
+	return data, nil
+}
