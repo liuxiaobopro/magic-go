@@ -44,6 +44,55 @@ func Start() {
 
 	logic()
 	controller()
+	router()
+}
+
+func router() {
+	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/router/router.go", conf.Get().CommandNew.Output), true); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return
+	} else {
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/router1.tpl")
+		tpl, _ := template.New("router1.tpl").Funcs(template.FuncMap{
+			"CamelCase": CamelCase,
+		}).Parse(string(tplByte))
+
+		type data struct {
+			ModuleName string   `json:"ModuleName"`
+			Tables     []string `json:"Tables"`
+		}
+
+		if err := tpl.Execute(f, data{
+			ModuleName: conf.Get().CommandNew.ModuleName,
+			Tables:     tables,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
+
+	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/router/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName), true); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return
+	} else {
+		tplByte, _ := tpl1Fs.ReadFile("tpl1/router2.tpl")
+		tpl, _ := template.New("router2.tpl").Funcs(template.FuncMap{
+			"CamelCase": CamelCase,
+		}).Parse(string(tplByte))
+
+		type data struct {
+			conf.CommandNew
+			Tables []string `json:"Table"`
+		}
+
+		if err := tpl.Execute(f, data{
+			CommandNew: conf.Get().CommandNew,
+			Tables:     tables,
+		}); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		}
+	}
 }
 
 func logic() {
