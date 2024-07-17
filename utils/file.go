@@ -6,7 +6,13 @@ import (
 )
 
 // CreateFileOrDir 传入文件路径, 创建文件或目录
-func CreateFileOrDir(file string) (*os.File, error) {
+func CreateFileOrDir(file string, isCover bool) (*os.File, error) {
+	if !isCover {
+		if _, err := os.Stat(file); err == nil {
+			return nil, nil
+		}
+	}
+
 	filePath := file[:strings.LastIndex(file, "/")]
 
 	if _, err := os.Stat(filePath); os.IsNotExist(err) {

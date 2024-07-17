@@ -1,0 +1,35 @@
+kind: reverse
+name: mydb
+source:
+    database: mysql
+    conn_str: "root:10a0ef57ae68f850@tcp(127.0.0.1:3306)/jldk?charset=utf8mb4"
+targets:
+    - type: codes
+      include_tables: # 包含的表，以下可以用 **
+      exclude_tables: # 排除的表，以下可以用 **
+      table_prefix: "qsgo_" # 表前缀
+      multiple_files: false # 是否生成多个文件
+      language: golang
+      output_dir: ./output/models
+      template: | # template for code file, it has higher perior than template_path
+          package models
+
+          import (
+              "github.com/liuxiaobopro/gobox/time"
+          )
+
+          {{range .Tables}}
+          type {{TableMapper .Name}} struct {
+          {{$table := .}}
+          {{range .ColumnsSeq}}{{$col := $table.GetColumn .}}	{{ColumnMapper $col.Name}}	{{Type $col}} `{{Tag $table $col}} json:"{{UnTitle $col.Name}}"`
+          {{end}}
+          }
+
+          func (m *{{TableMapper .Name}}) TableComment() string {
+          	return "{{$table.Comment}}"
+          }
+
+          func (m *{{TableMapper .Name}}) TableName() string {
+            return "{{$table.Name}}"
+          }
+          {{end}}

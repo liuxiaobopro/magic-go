@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/fs"
 	"os"
+	"os/exec"
 	"strings"
 
 	"magic_go/conf"
@@ -46,56 +47,68 @@ func Start() {
 }
 
 func logic() {
-	// 生成req
-	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/req/req.go", conf.Get().CommandNew.Output)); err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return
-	} else {
-		tplByte, _ := tpl1Fs.ReadFile("tpl1/req.tpl")
-		tpl, _ := template.New("req.tpl").Funcs(template.FuncMap{
-			"CamelCase": CamelCase,
-		}).Parse(string(tplByte))
-
-		type data struct {
-			ModuleName string   `json:"ModuleName"`
-			Tables     []string `json:"Tables"`
-		}
-
-		if err := tpl.Execute(f, data{
-			ModuleName: conf.Get().CommandNew.ModuleName,
-			Tables:     tables,
-		}); err != nil {
+	{ // 生成req
+		if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/req/req.go", conf.Get().CommandNew.Output), true); err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			return
+		} else {
+			tplByte, _ := tpl1Fs.ReadFile("tpl1/req.tpl")
+			tpl, _ := template.New("req.tpl").Funcs(template.FuncMap{
+				"CamelCase": CamelCase,
+			}).Parse(string(tplByte))
+
+			type data struct {
+				ModuleName string   `json:"ModuleName"`
+				Tables     []string `json:"Tables"`
+			}
+
+			if err := tpl.Execute(f, data{
+				ModuleName: conf.Get().CommandNew.ModuleName,
+				Tables:     tables,
+			}); err != nil {
+				fmt.Fprintf(os.Stderr, "%v\n", err)
+				return
+			}
 		}
 	}
 
-	// 生成reply
-	if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/reply/reply.go", conf.Get().CommandNew.Output)); err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-		return
-	} else {
-		tplByte, _ := tpl1Fs.ReadFile("tpl1/reply.tpl")
-		tpl, _ := template.New("reply.tpl").Funcs(template.FuncMap{
-			"CamelCase": CamelCase,
-		}).Parse(string(tplByte))
-
-		type data struct {
-			ModuleName string   `json:"ModuleName"`
-			Tables     []string `json:"Tables"`
-		}
-
-		if err := tpl.Execute(f, data{
-			ModuleName: conf.Get().CommandNew.ModuleName,
-			Tables:     tables,
-		}); err != nil {
+	{ // 生成reply
+		if f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/define/types/reply/reply.go", conf.Get().CommandNew.Output), true); err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
+			return
+		} else {
+			tplByte, _ := tpl1Fs.ReadFile("tpl1/reply.tpl")
+			tpl, _ := template.New("reply.tpl").Funcs(template.FuncMap{
+				"CamelCase": CamelCase,
+			}).Parse(string(tplByte))
+
+			type data struct {
+				ModuleName string   `json:"ModuleName"`
+				Tables     []string `json:"Tables"`
+			}
+
+			if err := tpl.Execute(f, data{
+				ModuleName: conf.Get().CommandNew.ModuleName,
+				Tables:     tables,
+			}); err != nil {
+				fmt.Fprintf(os.Stderr, "%v\n", err)
+				return
+			}
+		}
+	}
+
+	{ // 生成models
+		// 执行shell命令
+		cmd := exec.Command("reverse", "-f", "reverse.yml")
+		// 获取输出对象，可以从该对象中读取输出结果
+		if _, err := cmd.Output(); err != nil {
+			fmt.Fprintf(os.Stderr, "%v[请前往%s下载序列化工具]\n", err, "https://gitea.com/xorm/reverse/src/branch/main/README_CN.md")
 			return
 		}
 	}
 
 	for _, v := range tables {
-		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/logic/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v))
+		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/logic/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v), true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			return
@@ -157,7 +170,7 @@ func (t *tpl) Build() {
 			filePath := strings.TrimLeft(path, "tpl/")
 			filePath = filePath[:len(filePath)-4]
 
-			f, err := utils.CreateFileOrDir(conf.Get().CommandNew.Output + "/" + filePath)
+			f, err := utils.CreateFileOrDir(conf.Get().CommandNew.Output+"/"+filePath, true)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "%v\n", err)
 				return err
