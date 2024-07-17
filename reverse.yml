@@ -7,7 +7,7 @@ targets:
     - type: codes
       include_tables: # 包含的表，以下可以用 **
       exclude_tables: # 排除的表，以下可以用 **
-      table_prefix: "qsgo_" # 表前缀
+      table_prefix: "dk_" # 表前缀
       multiple_files: false # 是否生成多个文件
       language: golang
       output_dir: ./output/models

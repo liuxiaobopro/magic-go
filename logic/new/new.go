@@ -39,7 +39,7 @@ func Start() {
 
 	ts, _ := engine.DBMetas()
 	for _, table := range ts {
-		tables = append(tables, table.Name)
+		tables = append(tables, RemoveTablePrefix(table.Name))
 	}
 
 	logic()
@@ -77,7 +77,8 @@ func router() {
 	} else {
 		tplByte, _ := tpl1Fs.ReadFile("tpl1/router2.tpl")
 		tpl, _ := template.New("router2.tpl").Funcs(template.FuncMap{
-			"CamelCase": CamelCase,
+			"CamelCase":         CamelCase,
+			"RemoveTablePrefix": RemoveTablePrefix,
 		}).Parse(string(tplByte))
 
 		type data struct {
@@ -157,7 +158,7 @@ func logic() {
 	}
 
 	for _, v := range tables {
-		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/logic/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v), true)
+		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/logic/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, RemoveTablePrefix(v), RemoveTablePrefix(v)), true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			return
@@ -185,7 +186,7 @@ func logic() {
 		// 基于模板生成内容并写入文件
 		if err = tpl.Execute(f, data{
 			CommandNew: conf.Get().CommandNew,
-			Table:      v,
+			Table:      RemoveTablePrefix(v),
 		}); err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			return
@@ -195,7 +196,7 @@ func logic() {
 
 func controller() {
 	for _, v := range tables {
-		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/controller/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, v, v), true)
+		f, err := utils.CreateFileOrDir(fmt.Sprintf("%s/controller/%s/%s/%s.go", conf.Get().CommandNew.Output, conf.Get().CommandNew.ModuleName, RemoveTablePrefix(v), RemoveTablePrefix(v)), true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "%v\n", err)
 			return
@@ -289,6 +290,8 @@ func (t *tpl) Build() {
 
 // 大驼峰
 func CamelCase(s string) string {
+	s = RemoveTablePrefix(s)
+
 	// 分割字符串为单词
 	words := strings.Split(s, "_")
 	// 创建一个首字母大写转换器
@@ -304,6 +307,8 @@ func CamelCase(s string) string {
 
 // 小驼峰
 func CamelCaseLower(s string) string {
+	s = RemoveTablePrefix(s)
+
 	// 分割字符串为单词
 	words := strings.Split(s, "_")
 	// 创建一个首字母大写转换器
@@ -315,4 +320,13 @@ func CamelCaseLower(s string) string {
 	}
 	// 合并所有单词
 	return strings.ToLower(words[0]) + strings.Join(words[1:], "")
+}
+
+// 去除表前缀
+func RemoveTablePrefix(s string) string {
+	if s == conf.Get().CommandNew.ModuleName {
+		return s
+	}
+
+	return strings.TrimPrefix(s, conf.Get().CommandNew.TablePrefix)
 }

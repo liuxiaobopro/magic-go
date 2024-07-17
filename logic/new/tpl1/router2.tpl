@@ -13,10 +13,10 @@ func Add{{CamelCase .ModuleName}}(r *gin.RouterGroup) {
 	r.Use(ginMiddleware.Print(global.Logger))
 
     {{range .Tables}}
-    r.POST("/{{.}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Create)   // 创建
-    r.DELETE("/{{.}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Delete) // 删除
-    r.PUT("/{{.}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Update)    // 更新
-    r.GET("/{{.}}_list", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.List) // 列表
-    r.GET("/{{.}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Detail)    // 详情
+    r.POST("/{{RemoveTablePrefix .}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Create)   // 创建
+    r.DELETE("/{{RemoveTablePrefix .}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Delete) // 删除
+    r.PUT("/{{RemoveTablePrefix .}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Update)    // 更新
+    r.GET("/{{RemoveTablePrefix .}}_list", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.List) // 列表
+    r.GET("/{{RemoveTablePrefix .}}", {{.}}.{{CamelCase $.ModuleName}}{{CamelCase .}}Controller.Detail)    // 详情
     {{end}}
 }

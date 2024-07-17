@@ -24,6 +24,7 @@ type CommandNew struct {
 	ProjectName string `mapstructure:"ProjectName" json:"ProjectName"` // 项目名称
 	ModuleName  string `mapstructure:"ModuleName" json:"ModuleName"`   // 模块名称
 	DbDns       string `mapstructure:"DbDns" json:"DbDns"`             // 数据库连接
+	TablePrefix string `mapstructure:"TablePrefix" json:"TablePrefix"` // 表前缀
 }
 
 func Get() *Conf {

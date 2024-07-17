@@ -10,3 +10,5 @@ CommandNew:
     ModuleName: "admin"
     # 数据库连接(基于 xorm)
     DbDns: "root:111111@tcp(127.0.0.1:3306)/enian_blog?charset=utf8mb4"
+    # 表前缀
+    TablePrefix: "dk_"
