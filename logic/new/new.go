@@ -151,9 +151,11 @@ func logic() {
 		// 执行shell命令
 		cmd := exec.Command("reverse", "-f", "reverse.yml")
 		// 获取输出对象，可以从该对象中读取输出结果
-		if _, err := cmd.Output(); err != nil {
+		if out, err := cmd.Output(); err != nil {
 			fmt.Fprintf(os.Stderr, "%v[请前往%s下载序列化工具]\n", err, "https://gitea.com/xorm/reverse/src/branch/main/README_CN.md")
 			return
+		} else {
+			fmt.Println(string(out))
 		}
 	}
 
